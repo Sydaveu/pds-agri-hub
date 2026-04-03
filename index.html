@@ -5,15 +5,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>PDS Agri-Hub | Powered by Pi</title>
   <meta name="description" content="PDS Agri-Hub is a decentralized agricultural ecosystem on Pi Browser." />
-  <script src="https://sdk.minepi.com/pi-sdk.js"></script>
   <style>
     :root {
-      --bg: #0b1020;
+      --bg: #08112a;
       --text: #eef3ff;
-      --muted: #d7def5;
+      --muted: #d6ddf5;
       --brand: #f2c94c;
       --accent: #9fc6ff;
     }
+
     * { box-sizing: border-box; }
     body {
       margin: 0;
@@ -22,37 +22,52 @@
       background: var(--bg);
       line-height: 1.6;
     }
+
     .wrap { width: min(1000px, 92%); margin: 0 auto; }
 
     header {
       position: relative;
       min-height: 92vh;
+      overflow: hidden;
       display: grid;
       place-items: center;
       text-align: center;
-      overflow: hidden;
     }
 
-    .hero-video {
-      position: absolute;
-      inset: 0;
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      filter: blur(2px) brightness(0.45);
-      transform: scale(1.05);
-    }
-
+    .hero-video,
+    .hero-fallback,
     .hero-overlay {
       position: absolute;
       inset: 0;
-      background: linear-gradient(
-        180deg,
-        rgba(6, 12, 30, 0.45) 0%,
-        rgba(7, 15, 34, 0.72) 60%,
-        rgba(7, 15, 34, 0.9) 100%
-      );
     }
+
+    .hero-video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transform: scale(1.05);
+      opacity: 1;
+      transition: opacity 0.4s ease;
+    }
+
+    .hero-fallback {
+      background: url("/hero.jpg") center center / cover no-repeat;
+      transform: scale(1.08);
+      animation: panZoom 16s ease-in-out infinite alternate;
+      opacity: 0;
+      transition: opacity 0.4s ease;
+    }
+
+    .hero-overlay {
+      background:
+        radial-gradient(circle at 20% 20%, rgba(98, 159, 255, 0.18), transparent 35%),
+        radial-gradient(circle at 80% 80%, rgba(242, 201, 76, 0.16), transparent 35%),
+        rgba(4, 10, 24, 0.55);
+      backdrop-filter: blur(2px);
+    }
+
+    body.no-video .hero-video { opacity: 0; }
+    body.no-video .hero-fallback { opacity: 1; }
 
     .hero-content {
       position: relative;
@@ -65,37 +80,27 @@
     .tagline { font-size: clamp(1rem, 2.8vw, 1.3rem); color: var(--accent); margin-bottom: 14px; }
     .lead { max-width: 760px; margin: 0 auto 20px; color: var(--muted); }
 
-    .btns {
-      display: flex;
-      gap: 10px;
-      justify-content: center;
-      flex-wrap: wrap;
-      margin-top: 12px;
-    }
-
-    .btn {
-      border: 0;
+    .cta {
+      display: inline-block;
+      background: var(--brand);
+      color: #1b1b1b;
       text-decoration: none;
       font-weight: 700;
       padding: 12px 18px;
       border-radius: 10px;
-      cursor: pointer;
-      font-size: 0.95rem;
-    }
-    .btn-primary { background: var(--brand); color: #1b1b1b; }
-    .btn-outline { background: transparent; border: 1px solid #ffffff66; color: #fff; }
-
-    .status {
-      margin-top: 14px;
-      font-size: 0.92rem;
-      color: #d9e4ff;
-      min-height: 22px;
+      margin-top: 12px;
     }
 
-    section { padding: 56px 0; border-top: 1px solid rgba(255,255,255,0.12); background: #0b1228; }
+    section {
+      padding: 56px 0;
+      border-top: 1px solid rgba(255,255,255,0.12);
+      background: #0b1228;
+    }
+
     h2 { margin: 0 0 14px; font-size: 1.8rem; }
     .item { margin: 0 0 16px; }
     .item strong { color: var(--brand); }
+
     .mission {
       font-size: 1.1rem;
       color: #fff;
@@ -103,15 +108,28 @@
       padding: 16px;
       border-radius: 10px;
     }
+
     .links a { color: var(--accent); text-decoration: none; margin-right: 14px; }
-    footer { padding: 26px 0 40px; color: var(--muted); border-top: 1px solid rgba(255,255,255,0.12); background: #070d1f; }
+
+    footer {
+      padding: 26px 0 40px;
+      color: var(--muted);
+      border-top: 1px solid rgba(255,255,255,0.12);
+      background: #070d1f;
+    }
+
+    @keyframes panZoom {
+      from { transform: scale(1.06) translate(0, 0); }
+      to { transform: scale(1.14) translate(-2%, -1%); }
+    }
   </style>
 </head>
 <body>
   <header>
-    <video class="hero-video" autoplay muted loop playsinline>
+    <video id="heroVideo" class="hero-video" autoplay muted loop playsinline poster="/hero.jpg">
       <source src="/hero.mp4" type="video/mp4" />
     </video>
+    <div class="hero-fallback"></div>
     <div class="hero-overlay"></div>
 
     <div class="wrap hero-content">
@@ -121,12 +139,7 @@
         A premier decentralized ecosystem hosted on the Pi Browser, engineered to revolutionize
         the global agricultural value chain. Managed by Pisydaveu &amp; Co.
       </p>
-
-      <div class="btns">
-        <a class="btn btn-primary" href="#join">Join the Revolution</a>
-        <button id="payBtn" class="btn btn-outline">Test Pay 0.01 Pi</button>
-      </div>
-      <p id="payStatus" class="status"></p>
+      <a class="cta" href="#join">Join the Revolution</a>
     </div>
   </header>
 
@@ -144,12 +157,10 @@
   <section id="join">
     <div class="wrap">
       <h2>Connect and Get Started</h2>
-      <p><strong>Call to Action:</strong> Join the Revolution. Connect your Pi Wallet to get started.</p>
       <p><strong>Email:</strong> pds.agrihub@gmail.com</p>
       <p><strong>Phone:</strong> +234-9154472987</p>
       <p><strong>Managed by:</strong> Pisydaveu &amp; Co.</p>
       <p><strong>Legal/Contracts:</strong> Pisydaveu &amp; Co.</p>
-      <p><strong>Pi App URL:</strong> <a href="https://pdsagrihubeafbee3970.pinet.com" target="_blank">https://pdsagrihubeafbee3970.pinet.com</a></p>
       <p class="links">
         <a href="https://x.com/s_ugiagbe" target="_blank">X (Twitter)</a>
         <a href="https://www.facebook.com/david.u.sunday.5" target="_blank">Facebook</a>
@@ -164,62 +175,12 @@
   </footer>
 
   <script>
-    const payBtn = document.getElementById("payBtn");
-    const payStatus = document.getElementById("payStatus");
+    const heroVideo = document.getElementById("heroVideo");
 
-    function setStatus(msg) {
-      payStatus.textContent = msg;
-    }
-
-    async function initPiAndPay() {
-      try {
-        if (!window.Pi) {
-          setStatus("Pi SDK not found. Open this inside Pi Browser.");
-          return;
-        }
-
-        // Testnet mode for now
-        Pi.init({ version: "2.0", sandbox: true });
-
-        setStatus("Connecting to Pi account...");
-        await Pi.authenticate(["username", "payments"], function onIncompletePaymentFound(payment) {
-          console.log("Incomplete payment found:", payment);
-        });
-
-        setStatus("Opening Pi payment...");
-        const paymentData = {
-          amount: 0.01,
-          memo: "PDS Agri-Hub test payment",
-          metadata: { type: "test_payment", app: "pds-agri-hub" }
-        };
-
-        const paymentCallbacks = {
-          onReadyForServerApproval: function (paymentId) {
-            console.log("Ready for server approval:", paymentId);
-            setStatus("Payment created. Awaiting server approval.");
-          },
-          onReadyForServerCompletion: function (paymentId, txid) {
-            console.log("Ready for server completion:", paymentId, txid);
-            setStatus("Payment submitted. Awaiting server completion.");
-          },
-          onCancel: function (paymentId) {
-            console.log("User cancelled payment:", paymentId);
-            setStatus("Payment cancelled.");
-          },
-          onError: function (error, payment) {
-            console.error("Payment error:", error, payment);
-            setStatus("Payment error. Try again.");
-          }
-        };
-
-        await Pi.createPayment(paymentData, paymentCallbacks);
-      } catch (e) {
-        console.error(e);
-        setStatus("Could not start payment. Open in Pi Browser and try again.");
-      }
-    }
-
-    payBtn.addEventListener("click", initPiAndPay);
+    // If video autoplay fails on some devices/webviews, switch to animated image fallback.
+    heroVideo.play().catch(() => {
+      document.body.classList.add("no-video");
+    });
   </script>
 </body>
 </html>
