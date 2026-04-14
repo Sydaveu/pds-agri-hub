@@ -1,0 +1,46 @@
+.bg {
+  position: relative;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.bg::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: url("/hero.mp4") center/cover no-repeat;
+  filter: blur(20px);
+  z-index: -1;
+}
+
+.card {
+  background: rgba(0,0,0,0.7);
+  padding: 20px;
+  margin: auto;
+  margin-top: 100px;
+  width: 300px;
+  border-radius: 10px;
+  color: white;
+}
+
+.container {
+  padding: 10px;
+  color: white;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2,1fr);
+  gap: 10px;
+}
+
+.card2 {
+  background: #111;
+  padding: 10px;
+  border-radius: 10px;
+}
+
+img {
+  width: 100%;
+  border-radius: 10px;
+}

@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>AgriHub PRO</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+<link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<header>
+<h3>🌾 AgriHub</h3>
+<button onclick="logout()">Logout</button>
+</header>
+
+<div class="container">
+
+<h2 id="welcome"></h2>
+
+<!-- SETTINGS -->
+<h3>Settings</h3>
+<input id="fullname" placeholder="Full Name">
+<input type="file" id="avatar">
+<button onclick="saveProfile()">Save Profile</button>
+
+<hr>
+
+<!-- ADD PRODUCT -->
+<h3>Add Product</h3>
+
+<select id="category">
+<option>Crops</option>
+<option>Animals</option>
+<option>Tools</option>
+</select>
+
+<input id="name" placeholder="Product Name">
+<input id="quantity" type="number" placeholder="Quantity">
+<input id="price" placeholder="Price (π optional)">
+<button onclick="addProduct()">Add</button>
+
+<hr>
+
+<!-- MARKET -->
+<h3>Marketplace</h3>
+<div id="products" class="grid"></div>
+
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>

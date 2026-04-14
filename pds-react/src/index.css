@@ -1,0 +1,11 @@
+body {
+  margin: 0;
+  font-family: sans-serif;
+  background: linear-gradient(to bottom, #0f2027, #203a43, #2c5364);
+  color: white;
+}
+
+input, select, button {
+  padding: 8px;
+  margin: 5px;
+}
