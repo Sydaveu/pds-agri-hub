@@ -1,11 +1,67 @@
 body {
   margin: 0;
-  font-family: sans-serif;
-  background: linear-gradient(to bottom, #0f2027, #203a43, #2c5364);
+  font-family: Arial;
+  background: linear-gradient(to right, #0f2027, #203a43, #2c5364);
   color: white;
 }
 
-input, select, button {
-  padding: 8px;
-  margin: 5px;
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  padding: 15px;
+  background: black;
+}
+
+.logout {
+  background: green;
+  border: none;
+  padding: 5px 10px;
+  color: white;
+}
+
+.grid {
+  display: flex;
+  gap: 15px;
+  padding: 10px;
+}
+
+.card {
+  background: black;
+  padding: 15px;
+  border-radius: 10px;
+  width: 150px;
+  text-align: center;
+}
+
+.product-img {
+  width: 100%;
+  height: 100px;
+  object-fit: cover;
+}
+
+button {
+  background: green;
+  border: none;
+  padding: 5px;
+  margin-top: 5px;
+  color: white;
+  cursor: pointer;
+}
+
+.cart {
+  background: black;
+  margin: 20px;
+  padding: 15px;
+}
+
+.cart-item {
+  display: flex;
+  justify-content: space-between;
+  margin: 10px 0;
+}
+
+.checkout {
+  width: 100%;
+  padding: 10px;
+  margin-top: 10px;
 }

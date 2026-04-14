@@ -1,36 +1,18 @@
-import { useEffect, useState } from "react";
-import { supabase } from "./lib/supabase";
-import Auth from "./components/Auth";
-import Navbar from "./components/Navbar";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Home from "./pages/Home";
+import ChatPage from "./pages/ChatPage";
 import Profile from "./pages/Profile";
 
-export default function App() {
-  const [session, setSession] = useState<any>(null);
-  const [cart, setCart] = useState<any[]>([]);
-  const [page, setPage] = useState("home");
-
-  useEffect(() => {
-    supabase.auth.getSession().then(({ data }: any) => {
-      setSession(data.session);
-    });
-
-    supabase.auth.onAuthStateChange((_event: any, session: any) => {
-      setSession(session);
-    });
-  }, []);
-
-  if (!session) return <Auth />;
-
+function App() {
   return (
-    <>
-      <Navbar user={session.user} setPage={setPage} />
-
-      {page === "home" && (
-        <Home user={session.user} cart={cart} setCart={setCart} />
-      )}
-
-      {page === "profile" && <Profile user={session.user} />}
-    </>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/chat" element={<ChatPage />} />
+        <Route path="/profile" element={<Profile />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
+
+export default App;

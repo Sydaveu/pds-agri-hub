@@ -1,24 +1,11 @@
-import { supabase } from "../lib/supabase";
-
-export default function Navbar({ user, setPage }: any) {
+export default function Navbar() {
   return (
-    <div style={{
-      display: "flex",
-      justifyContent: "space-between",
-      padding: 15,
-      background: "#000"
-    }}>
-      <h3 onClick={() => setPage("home")}>AgriHub 🌾</h3>
-
+    <div className="navbar">
+      <h2>AgriHub 🌾</h2>
       <div>
-        <span onClick={() => setPage("profile")}>
-          Hello {user.user_metadata?.full_name || user.email}
-        </span>
-
-        <button onClick={() => supabase.auth.signOut()}>
-          Logout
-        </button>
+        <span>Hello David Joshua</span>
+        <button className="logout">Logout</button>
       </div>
     </div>
-  );
+  )
 }

@@ -1,80 +1,77 @@
 import { useState, useEffect } from "react";
-import { supabase } from "../lib/supabase";
 
-export default function Profile({ user }: any) {
+const Profile = () => {
   const [name, setName] = useState("");
-  const [avatar, setAvatar] = useState<any>(null);
-  const [url, setUrl] = useState("");
+  const [image, setImage] = useState<string | null>(null);
 
+  // Load saved profile
   useEffect(() => {
-    load();
+    const savedName = localStorage.getItem("user_name");
+    const savedImage = localStorage.getItem("user_image");
+
+    if (savedName) setName(savedName);
+    if (savedImage) setImage(savedImage);
   }, []);
 
-  async function load() {
-    const { data } = await supabase
-      .from("profiles")
-      .select("*")
-      .eq("id", user.id)
-      .single();
+  // Handle image upload
+  const handleImage = (e: any) => {
+    const file = e.target.files[0];
+    const reader = new FileReader();
 
-    if (data) {
-      setName(data.full_name);
-      setUrl(data.avatar_url);
-    }
-  }
+    reader.onloadend = () => {
+      setImage(reader.result as string);
+      localStorage.setItem("user_image", reader.result as string);
+    };
 
-  async function save() {
-    let avatar_url = url;
+    if (file) reader.readAsDataURL(file);
+  };
 
-    if (avatar) {
-      const fileName = `${user.id}.png`;
-
-      await supabase.storage
-        .from("avatars")
-        .upload(fileName, avatar, { upsert: true });
-
-      const { data } = supabase.storage
-        .from("avatars")
-        .getPublicUrl(fileName);
-
-      avatar_url = data.publicUrl;
-    }
-
-    await supabase.from("profiles").upsert({
-      id: user.id,
-      full_name: name,
-      avatar_url
-    });
-
-    alert("Saved");
-  }
+  // Save name
+  const saveProfile = () => {
+    localStorage.setItem("user_name", name);
+    alert("Profile Saved ✅");
+  };
 
   return (
-    <div style={{ padding: 20 }}>
-      <h2>Profile</h2>
+    <div style={{ padding: "20px", color: "white" }}>
+      <h2>👤 Profile</h2>
 
-      <img
-        src={url || "https://via.placeholder.com/150"}
-        width={100}
-      />
+      <div style={{ marginTop: "20px" }}>
+        <input
+          placeholder="Enter your name"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          style={{ padding: "10px", width: "100%", marginBottom: "10px" }}
+        />
 
-      <br /><br />
+        <input type="file" onChange={handleImage} />
 
-      <input
-        value={name}
-        onChange={(e) => setName(e.target.value)}
-      />
+        {image && (
+          <div style={{ marginTop: "15px" }}>
+            <img
+              src={image}
+              alt="profile"
+              style={{ width: "120px", borderRadius: "50%" }}
+            />
+          </div>
+        )}
 
-      <br /><br />
-
-      <input
-        type="file"
-        onChange={(e: any) => setAvatar(e.target.files[0])}
-      />
-
-      <br /><br />
-
-      <button onClick={save}>Save</button>
+        <button
+          onClick={saveProfile}
+          style={{
+            marginTop: "20px",
+            padding: "10px",
+            background: "green",
+            color: "white",
+            border: "none",
+            width: "100%",
+          }}
+        >
+          Save Profile
+        </button>
+      </div>
     </div>
   );
-}
+};
+
+export default Profile;
